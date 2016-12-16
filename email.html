@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script  src="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.6/angular.min.js"></script>
+    <script src="email.js"></script>
+    <link rel="stylesheet" type="text/css" href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css"/>
+    <style type="text/css">
+      .container {
+          margin-top: 20px;
+      }
+    </style>
+</head>
+<body>
+    <div class="container" ng-app="emailApp" ng-controller="EmailController">
+        <ul class="nav nav-tabs">
+    <li ng-class="{active: activeTab == 'inbox'}">
+        <a ng-click="activeTab='inbox'">Inbox</a>
+    </li>
+    <li ng-class="{active: activeTab == 'sent'}">
+        <a ng-click="activeTab='sent'">Sent</a>
+    </li>
+            <li ng-class="{active: activeTab == 'drafts'}">
+        <a ng-click="activeTab='drafts'">Drafts</a>
+    </li>
+</ul> 
+        <table ng-show="activeTab=='inbox'" class="table table-bordered table-condensed">
+    <tbody>
+        <tr>
+            <td><b>From</b></td>
+            <td><b>Subject</b></td>
+            <td><b>Date</b></td>
+          
+        </tr>
+        <tr ng-repeat="email in emails" ng-click="showPopup(email)">
+            <td>{{email.from}}</td>
+            <td>{{email.subject}}</td>
+            <td>{{ email.date | date:'MMM d' }}</td>
+       
+        </tr>
+        
+    </tbody>
+</table>
+        <table ng-show="activeTab=='sent'" class="table table-bordered table-condensed">
+        <tbody>
+            <tr ng-repeat="email in sentEmails" ng-click="showPopup(email)">
+                <td>{{ email.to }}</td>
+                <td>{{ email.subject }}</td>
+                <td>{{ email.date | date:'MMM d' }}</td>
+                  
+            </tr>
+        </tbody>
+    </table>
+        <table ng-show="activeTab=='drafts'" class="table table-bordered table-condensed">
+        <tbody>
+            <tr ng-repeat="email in draftEmails" ng-click="showPopup(email)">
+                <td>{{ email.to }}</td>
+                <td>{{ email.subject }}</td>
+                <td>{{ email.date | date:'MMM d' }}</td>
+                  
+            </tr>
+        </tbody>
+    </table>
+        <button class="btn btn-primary" ng-click="showComposePopup()">Compose</button>
+        <div class="modal" ng-show="isPopupVisible">
+    <div class="modal-header" ng-click="closePopup()">
+        <button type="button" class="close">X</button>
+        <h3>{{selectedEmail.subject}}</h3>
+    </div>
+    <div class="modal-body">
+        <strong>From:</strong>{{selectedEmail.from}}<br />
+        <strong>Date:</strong>{{selectedEmail.date}}<br />
+        <br />
+        <p>
+           {{selectedEmail.body}}<br />
+            Sincerely<br />
+            {{selectedEmail.from}}
+        </p>
+    </div>
+    <div class="modal-footer" ng-click="closePopup()">
+        <a href="#" class="btn" ng-click="forward()">Forward</a>
+        <a href="#" class="btn" ng-click="reply()">Reply</a>
+        <a href="#" class="btn btn-primary">Close</a>
+    </div>
+</div>
+        <div class="modal" ng-show="isComposePopupVisible">
+    <div class="modal-header" ng-click="closeComposePopup()">
+        <button type="button" class="close">X</button>
+        <h3>Compose Email</h3>
+    </div>
+    <div class="modal-body">
+        <form>
+            <input type="text" placeholder="To" style="width:95%;" ng-model="composeEmail.to" ng-required="true"></input><br />
+            <input type="text" placeholder="Subject" style="width:95%;" ng-model="composeEmail.subject"></input><br />
+            <textarea style="width:95%;" rows="10" ng-model="composeEmail.body"></textarea>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <a href="#" class="btn" ng-click="closeComposePopup()">Close</a>
+        <a href="#" class="btn btn-primary" ng-click="sendEmail()" >Send</a>
+        <a href="#" class="btn btn-primary" ng-click="saveDraft()">Save in Drafts</a>
+    </div>
+</div>                                          
+</div>
+</body>
+</html>
